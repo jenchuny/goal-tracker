@@ -1,13 +1,16 @@
 import React from 'react';
 import './App.css';
 import Goals from './Goals';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    import('preline');
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Firebase Goals App</h1>
-      </header>
+        <h1 class ="text-3xl font-bold underline">Firebase Goals App</h1>
       <Goals />
     </div>
   );
