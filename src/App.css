@@ -3,5 +3,7 @@
 @import 'tailwindcss/utilities';
 
 .App {
-  text-align: center;
+  text-align: left;
+  max-width: 1024px;
+  padding: 4rem 4rem 4rem 4rem;
 }
