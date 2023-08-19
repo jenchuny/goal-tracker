@@ -27,41 +27,42 @@ function SignUpPage() {
       <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="firstName">First Name:</label>
+          <label class ="block">First Name:</label>
           <input
             type="text"
             id="firstName"
-            name="firstName"
+            class="mt-1 block w-full" placeholder="First name"
             value={formData.firstName}
             onChange={handleChange}
           />
         </div>
         <div>
-          <label htmlFor="lastName">Last Name:</label>
+          <label class="block">Last Name:</label>
           <input
             type="text"
             id="lastName"
-            name="lastName"
+            class="mt-1 block w-full" placeholder="Last Name"
             value={formData.lastName}
             onChange={handleChange}
           />
         </div>
         <div>
-          <label htmlFor="email">Email:</label>
+          <label class="block">Email:</label>
           <input
             type="email"
             id="email"
-            name="email"
+            class="mt-1 block w-full"
+            placeholder="jennyrocks@gmail.com"
             value={formData.email}
             onChange={handleChange}
           />
         </div>
         <div>
-          <label htmlFor="password">Password:</label>
+          <label class="block">Password:</label>
           <input
             type="password"
             id="password"
-            name="password"
+            class="mt-1 block w-full"
             value={formData.password}
             onChange={handleChange}
           />
