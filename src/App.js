@@ -12,29 +12,29 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-        <h1 class ="text-3xl font-bold underline">GOALS!</h1>
+    // <div className="App">
+    //     <h1 class ="text-3xl font-bold underline">GOALS!</h1>
 
-    <Router>
-    <nav>
-      <ul>
-      <li>
-          <Link to="/goals">Goals</Link>
-        </li>
-        <li>
-          <Link to="/signup">Sign Up</Link>
-        </li>
-      </ul>
-    </nav>
+    // <Router>
+    // <nav>
+    //   <ul>
+    //   <li>
+    //       <Link to="/goals">Goals</Link>
+    //     </li>
+    //     <li>
+    //       <Link to="/signup">Sign Up</Link>
+    //     </li>
+    //   </ul>
+    // </nav>
 
-      <Routes>
-        <Route path="/signup" element={<SignUpPage/>} />
-        <Route path="/goals" element={<Goals/>} />
-      </Routes>
-    </Router>
+    //   <Routes>
+    //     <Route path="/signup" element={<SignUpPage/>} />
+    //     <Route path="/goals" element={<Goals/>} />
+    //   </Routes>
+    // </Router>
 
     <SignUpPage />
-    </div>
+    // </div>
 
     
   );
