@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import AuthDetails from './components/AuthDetails';
+import Navigation from './components/Navigation';
 
 function App() {
   useEffect(() => {
@@ -16,35 +17,16 @@ function App() {
   return (
 <div>
     <Router>
-    <nav>
-      <ul>
-      <li>
-          <Link to="/goals">Goals</Link>
-        </li>
-        <li>
-          <Link to="/signup">Sign Up</Link>
-        </li>
-        <li>
-          <Link to="/login">Login</Link>
-        </li>
-        <li>
-        <AuthDetails />
-        </li>
-      </ul>
-    </nav>
-
-      <Routes>
+    <Navigation />
+    <Routes>
         <Route path="/signup" element={<SignUpPage/>} />
         <Route path="/goals" element={<Goals/>} />
         <Route path="/login" element={<LoginPage/>} />
         
       </Routes>
-    </Router>
-</div>
-    
-  );
-
-}
-
+  </Router>
+  </div>
+);
+  }
 
 export default App;
