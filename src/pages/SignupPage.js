@@ -28,7 +28,7 @@ function SignUpPage() {
               <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Sign up</h1>
               <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Already have an account? 
-                <Link class="text-blue-600 decoration-2 hover:underline font-medium" href="/login">
+                <Link class="text-blue-600 decoration-2 hover:underline font-medium" to="/login">
                   Sign in here
                 </Link>
               </p>
