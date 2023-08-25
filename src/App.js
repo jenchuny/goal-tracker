@@ -3,10 +3,8 @@ import './App.css';
 import Goals from './components/Goals';
 import SignUpPage from './pages/SignupPage';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import AuthDetails from './components/AuthDetails';
 import Navigation from './components/Navigation';
 
 function App() {
