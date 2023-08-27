@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../index';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const signUp = (e) => {
     e.preventDefault();
@@ -16,6 +17,7 @@ function SignUpPage() {
       .catch((error) => {
         console.log(error);
       });
+      navigate('/goals');
   };
 
   return (

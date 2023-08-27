@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { addDoc, getDocs, query, orderBy } from 'firebase/firestore';
 import { db, goalsCollection } from '../index'; // Import db and goalsCollection from index.js
-
+import { useAuth } from './AuthContext';
+import { startOfWeek, endOfWeek } from 'date-fns';
 
 function Goals() {
   const [goals, setGoals] = useState([]);
   const [newGoal, setNewGoal] = useState('');
+  const { authUser } = useAuth();
+  const [showAllGoals, setShowAllGoals] = useState(false);
 
   useEffect(() => {
     fetchGoals();
@@ -13,13 +16,36 @@ function Goals() {
 
   const fetchGoals = async () => {
     try {
+      if (!authUser) return; // Return early if no user is logged in
+  
       const q = query(goalsCollection, orderBy('timestamp', 'desc'));
       const querySnapshot = await getDocs(q);
       const goalsData = [];
       querySnapshot.forEach((doc) => {
         goalsData.push({ id: doc.id, ...doc.data() });
       });
-      setGoals(goalsData);
+  
+      const currentWeekStart = startOfWeek(new Date());
+      const currentWeekEnd = endOfWeek(new Date());
+  
+      let userGoals;
+  
+      if (showAllGoals) {
+        // Fetch all goals by the logged-in user
+        userGoals = goalsData.filter((goal) => goal.userId === authUser.uid);
+      } else {
+        // Fetch goals created during the current week by the logged-in user
+        userGoals = goalsData.filter((goal) => {
+          const goalTimestamp = goal.timestamp.toDate();
+          return (
+            goal.userId === authUser.uid &&
+            goalTimestamp >= currentWeekStart &&
+            goalTimestamp <= currentWeekEnd
+          );
+        });
+      }
+  
+      setGoals(userGoals);
     } catch (error) {
       console.error('Error fetching goals: ', error);
     }
@@ -27,35 +53,82 @@ function Goals() {
 
   const handleAddGoal = async () => {
     if (newGoal.trim() !== '') {
+      if (authUser) {
       const goalData = {
         text: newGoal,
         timestamp: new Date(),
+        userId: authUser.uid,
       };
       await addDoc(goalsCollection, goalData);
       setNewGoal('');
       fetchGoals();
     }
+  }
+  };
+
+  const GoalsTable = ({ goals }) => {
+    return (
+      <div>
+  <label>Show all goals</label>
+  <input
+    type="checkbox"
+    checked={showAllGoals}
+    onChange={() => setShowAllGoals(!showAllGoals)}
+  />
+      <div className="flex flex-co py-4">
+        <div className="-m-1.5 overflow-x-auto">
+          <div className="p-1.5 min-w-full inline-block align-middle">
+            <div className="border rounded-lg overflow-hidden dark:border-gray-700">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead>
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date Created</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Goal</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created by</th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {goals.map((goal) => (
+                    <tr key={goal.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">{goal.timestamp.toDate().toLocaleDateString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{goal.text}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{goal.userId}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a className="text-blue-500 hover:text-blue-700" href="#">Delete</a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    );
   };
 
   return (
-    <div class="container mx-auto">
-      <h2 className="text-xl font-bold mb-4">Goals</h2>
-      <ul>
-        {goals.map((goal) => (
-          <li key={goal.id}>{goal.text}</li>
-        ))}
-      </ul>
+<div className="container mx-auto py-4">
 
+<div class="flex rounded-md shadow-sm">
       <input
         type="text"
-        class="py-3 px-5 block w-full border-gray-200 rounded-full text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" 
+        id="hs-trailing-button-add-on" 
+        name="hs-trailing-button-add-on" 
+        class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" 
         placeholder="Enter your goal"
         value={newGoal}
         onChange={(e) => setNewGoal(e.target.value)}
       />
-      <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded" onClick={handleAddGoal}>Add Goal</button>
+      <button class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm" onClick={handleAddGoal}>Add Goal</button>
     </div>
+
+    <GoalsTable goals={goals} />
     
+    </div>
+
   );
 }
 
