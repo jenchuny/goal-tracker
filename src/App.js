@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import Navigation from './components/Navigation';
+import { AuthProvider } from './components/AuthContext'; // Adjust the path to your AuthContext.js
 
 function App() {
   useEffect(() => {
@@ -14,6 +15,7 @@ function App() {
 
   return (
 <div>
+<AuthProvider>
     <Router>
     <Navigation />
     <Routes>
@@ -23,6 +25,7 @@ function App() {
         
       </Routes>
   </Router>
+  </AuthProvider>
   </div>
 );
   }
