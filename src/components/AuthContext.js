@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../index'; // Adjust the path to your firebase auth instance
+import { auth } from '../firebaseUtils'; // Adjust the path to your firebase auth instance
 import { onAuthStateChanged } from 'firebase/auth'; // Import onAuthStateChanged from the correct module
 
 const AuthContext = createContext();
