@@ -5,7 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth'; // Import onAuthStateChanged
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authUser, setAuthUser] = useState(null);
+  const [authUser, setAuthUser] = useState(null); //represent current auth user or null if not authenticated
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -30,4 +30,4 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   return useContext(AuthContext);
-};
+}; //access current user's authentication status

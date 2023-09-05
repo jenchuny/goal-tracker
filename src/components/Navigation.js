@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import AuthDetails from './AuthDetails';
+import { useAuth } from './AuthContext';
 
 function Navigation() {
+
+  const { authUser } = useAuth();
 
     return (
 <header class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-blue-600 border-b border-white/[.5] text-sm py-3 sm:py-0">
@@ -22,7 +25,9 @@ function Navigation() {
     </div>
     <div id="navbar-collapse-with-animation" class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:block">
       <div class="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
-        <Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/goals" aria-current="page">Goals</Link>
+      
+      {authUser ? (<Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/goals" aria-current="page">Goals</Link>) : null }
+       
         <AuthDetails></AuthDetails>
 
       </div>
