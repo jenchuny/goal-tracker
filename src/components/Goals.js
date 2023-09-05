@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { addDoc, getDocs, query, orderBy } from 'firebase/firestore';
-import { db, goalsCollection } from '../index'; // Import db and goalsCollection from index.js
+import { goalsCollection } from '../firebaseUtils'; // Import db and goalsCollection from index.js
 import { useAuth } from './AuthContext';
 import { startOfWeek, endOfWeek } from 'date-fns';
 

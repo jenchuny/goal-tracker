@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../index'; // Adjust the path to your firebase auth instance
+import { auth } from '../firebaseUtils'; // Adjust the path to your firebase auth instance
 import { onAuthStateChanged } from 'firebase/auth'; // Import onAuthStateChanged from the correct module
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authUser, setAuthUser] = useState(null);
+  const [authUser, setAuthUser] = useState(null); //represent current auth user or null if not authenticated
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -30,4 +30,4 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   return useContext(AuthContext);
-};
+}; //access current user's authentication status
