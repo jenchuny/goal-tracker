@@ -4,7 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth'; // Import onAuthStateChanged
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => { //allows all child components to access the authUser state via the useAuth hook
   const [authUser, setAuthUser] = useState(null); //represent current auth user or null if not authenticated
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, []); //updates authUser when the user logs in or out
 
   return (
     <AuthContext.Provider value={{ authUser }}>

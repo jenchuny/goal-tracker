@@ -13,11 +13,13 @@ function SignUpPage() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
+        navigate('/goals')
       })
       .catch((error) => {
-        console.log(error);
+        const errorCode = error.code;
+        const errorMessage = error.message;
       });
-      navigate('/goals');
+;
   };
 
   return (

@@ -1,11 +1,17 @@
-import React from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import AuthDetails from './AuthDetails';
 import { useAuth } from './AuthContext';
 
 function Navigation() {
 
   const { authUser } = useAuth();
+  const [authState, setAuthState] = useState(null);
+
+  useEffect(() => {
+    // Update authState whenever authUser changes
+    setAuthState(authUser);
+  }, [authUser]);
 
     return (
 <header class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full bg-blue-600 border-b border-white/[.5] text-sm py-3 sm:py-0">
