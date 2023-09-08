@@ -4,15 +4,14 @@ import { getFirestore, collection } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID",
+  apiKey: "AIzaSyDXp7LHmtn_cNXkfNwUAjxjxtY3AYX2_sM",
+  authDomain: "goal-tracker-e5883.firebaseapp.com",
+  projectId: "goal-tracker-e5883",
+  storageBucket: "goal-tracker-e5883.appspot.com",
+  messagingSenderId: "89205323125",
+  appId: "1:89205323125:web:441504fd4a8c52f6f34f3c",
+  measurementId: "G-VVEB1F040G"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);

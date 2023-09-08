@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 const AuthDetails = () => {
   const [authUser, setAuthUser] = useState(null);
 
+  //listen to changes to authentication state; if the user is not logged in, set the state to null
   useEffect(() => {
     const listen = onAuthStateChanged(auth, (user) => {
       if (user) {
