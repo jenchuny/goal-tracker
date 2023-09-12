@@ -1,51 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import { addDoc, getDocs, query, orderBy } from 'firebase/firestore';
-import { goalsCollection } from '../firebaseUtils'; // Import db and goalsCollection from index.js
+import { addDoc, getDocs, query, orderBy, where } from 'firebase/firestore';
+import { db, goalsCollection } from '../firebaseUtils'; // Import db and goalsCollection from index.js
 import { useAuth } from './AuthContext';
-import { startOfWeek, endOfWeek } from 'date-fns';
 
 function Goals() {
   const [goals, setGoals] = useState([]);
+  const { authUser } = useAuth(); 
   const [newGoal, setNewGoal] = useState('');
-  const { authUser } = useAuth();
-  const [showAllGoals, setShowAllGoals] = useState(false);
 
   useEffect(() => {
-    fetchGoals();
-  }, []);
+    if (authUser) {
+      fetchGoals(authUser.uid)
+        .then((userGoals) => {
+          setGoals(userGoals);
+        })
+        .catch((error) => {
+          console.error('Error fetching goals:', error);
+        });
+    }
+  }, [authUser]);
 
   const fetchGoals = async () => {
     try {
       if (!authUser) return; // Return early if no user is logged in
   
-      const q = query(goalsCollection, orderBy('timestamp', 'desc'));
+      const q = query(goalsCollection, where('userId', '==', authUser.uid), orderBy('timestamp'));
       const querySnapshot = await getDocs(q);
       const goalsData = [];
+  
       querySnapshot.forEach((doc) => {
         goalsData.push({ id: doc.id, ...doc.data() });
       });
-  
-      const currentWeekStart = startOfWeek(new Date());
-      const currentWeekEnd = endOfWeek(new Date());
-  
-      let userGoals;
-  
-      if (showAllGoals) {
-        // Fetch all goals by the logged-in user
-        userGoals = goalsData.filter((goal) => goal.userId === authUser.uid);
-      } else {
-        // Fetch goals created during the current week by the logged-in user
-        userGoals = goalsData.filter((goal) => {
-          const goalTimestamp = goal.timestamp.toDate();
-          return (
-            goal.userId === authUser.uid &&
-            goalTimestamp >= currentWeekStart &&
-            goalTimestamp <= currentWeekEnd
-          );
-        });
-      }
-  
-      setGoals(userGoals);
+
+      console.log('Fetched goals:', goalsData);
+      setGoals(goalsData);
     } catch (error) {
       console.error('Error fetching goals: ', error);
     }
@@ -57,7 +45,8 @@ function Goals() {
       const goalData = {
         text: newGoal,
         timestamp: new Date(),
-        userId: authUser.uid,
+        userId: authUser.uid
+        // status: 'incomplete'
       };
       await addDoc(goalsCollection, goalData);
       setNewGoal('');
@@ -67,14 +56,8 @@ function Goals() {
   };
 
   const GoalsTable = ({ goals }) => {
+    
     return (
-      <div>
-  <label>Show all goals</label>
-  <input
-    type="checkbox"
-    checked={showAllGoals}
-    onChange={() => setShowAllGoals(!showAllGoals)}
-  />
       <div className="flex flex-co py-4">
         <div className="-m-1.5 overflow-x-auto">
           <div className="p-1.5 min-w-full inline-block align-middle">
@@ -105,7 +88,6 @@ function Goals() {
           </div>
         </div>
       </div>
-      </div>
     );
   };
 
@@ -125,8 +107,13 @@ function Goals() {
       <button class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm" onClick={handleAddGoal}>Add Goal</button>
     </div>
 
-    <GoalsTable goals={goals} />
-    
+    {goals && goals.length > 0 ? (
+  <GoalsTable goals={goals} />
+) : (
+  <p>No goals available.</p>
+)}
+
+  
     </div>
 
   );
