@@ -6,7 +6,7 @@ import { useAuth } from './AuthContext';
 function Goals() {
   const [goals, setGoals] = useState([]);
   const { authUser } = useAuth(); 
-  const [newGoal, setNewGoal] = useState('');
+  const [newGoals, setNewGoals] = useState(['', '', '']);
 
   useEffect(() => {
     if (authUser) {
@@ -40,19 +40,30 @@ function Goals() {
   };
 
   const handleAddGoal = async () => {
-    if (newGoal.trim() !== '') {
-      if (authUser) {
-      const goalData = {
-        text: newGoal,
-        timestamp: new Date(),
-        userId: authUser.uid,
-        status: 'incomplete'
-      };
-      await addDoc(goalsCollection, goalData);
-      setNewGoal('');
+    const trimmedGoals = newGoals.map((goal) => goal.trim());
+    const validGoals = trimmedGoals.filter((goal) => goal !== '');
+
+    if (validGoals.length > 0 && authUser) {
+      const goalPromises = validGoals.map((goalText) => {
+        const goalData = {
+          text: goalText,
+          timestamp: new Date(),
+          userId: authUser.uid,
+          status: 'incomplete',
+        };
+        return addDoc(goalsCollection, goalData);
+      });
+
+      await Promise.all(goalPromises);
+      setNewGoals(['', '', '']); // Clear input fields
       fetchGoals();
     }
-  }
+  };
+
+  const handleGoalInputChange = (index, value) => {
+    const updatedGoals = [...newGoals];
+    updatedGoals[index] = value;
+    setNewGoals(updatedGoals);
   };
 
   const GoalsTable = ({ goals }) => {
@@ -95,17 +106,20 @@ function Goals() {
 <div className="container mx-auto py-4">
 
 <div class="flex rounded-md shadow-sm">
-      <input
-        type="text"
-        id="hs-trailing-button-add-on" 
-        name="hs-trailing-button-add-on" 
-        class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400" 
-        placeholder="Enter your goal"
-        value={newGoal}
-        onChange={(e) => setNewGoal(e.target.value)}
-      />
-      <button class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm" onClick={handleAddGoal}>Add Goal</button>
-    </div>
+        {newGoals.map((goal, index) => (
+          <input
+            key={index}
+            type="text"
+            id={`goal-input-${index}`}
+            name={`goal-input-${index}`}
+            class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+            placeholder={`Enter your goal ${index + 1}`}
+            value={goal}
+            onChange={(e) => handleGoalInputChange(index, e.target.value)}
+          />
+        ))}
+        <button class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm" onClick={handleAddGoal}>Add Goals</button>
+      </div>
 
     {goals && goals.length > 0 ? (
   <GoalsTable goals={goals} />
