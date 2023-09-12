@@ -45,8 +45,8 @@ function Goals() {
       const goalData = {
         text: newGoal,
         timestamp: new Date(),
-        userId: authUser.uid
-        // status: 'incomplete'
+        userId: authUser.uid,
+        status: 'incomplete'
       };
       await addDoc(goalsCollection, goalData);
       setNewGoal('');
