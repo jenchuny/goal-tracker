@@ -14,11 +14,12 @@ function LoginPage() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
+        navigate('/goals');
       })
       .catch((error) => {
         console.log(error);
       });
-      navigate('/goals');
+      
   };
 
   return (
