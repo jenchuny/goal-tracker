@@ -32,8 +32,13 @@ function Navigation() {
     <div id="navbar-collapse-with-animation" class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:block">
       <div class="flex flex-col gap-y-4 gap-x-0 mt-5 sm:flex-row sm:items-center sm:justify-end sm:gap-y-0 sm:gap-x-7 sm:mt-0 sm:pl-7">
       
-      {authUser ? (<Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/goals" aria-current="page">Goals</Link>) : null }
-       
+      {authUser ? (
+              <>
+                <Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/goals" aria-current="page">Goals</Link>
+                <Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/this-week" aria-current="page">This Week</Link>
+              </>
+            ) : null}
+
         <AuthDetails></AuthDetails>
 
       </div>
