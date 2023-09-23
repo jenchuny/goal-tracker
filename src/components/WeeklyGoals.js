@@ -48,23 +48,25 @@ function WeeklyGoals() {
     }
   };
 
-  const handleCompleteGoal = async (goalId) => {
+  const handleChangeGoalStatus = async (goalId, currentStatus) => {
     try {
       const goalRef = doc(goalsCollection, goalId);
-  
-      // Update the status to "complete"
-      await updateDoc(goalRef, { status: 'complete' });
-  
-      // Optionally, you can update the local state to reflect the change
+      const newStatus = currentStatus === 'complete' ? 'incomplete' : 'complete';
+
+      // Update the status to the newStatus
+      await updateDoc(goalRef, { status: newStatus });
+
+      // Update the local state to reflect the change and toggle the text
       setWeekGoals((prevGoals) =>
         prevGoals.map((goal) =>
-          goal.id === goalId ? { ...goal, status: 'complete' } : goal
+          goal.id === goalId ? { ...goal, status: newStatus } : goal
         )
       );
     } catch (error) {
-      console.error('Error completing goal:', error);
+      console.error('Error toggling goal status:', error);
     }
   };
+
 
   // Render the goals in a table similar to your previous component
   return (
@@ -87,7 +89,12 @@ function WeeklyGoals() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{goal.text}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{goal.status}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <a className="text-blue-500 hover:text-blue-700" href="#" onClick={() => handleCompleteGoal(goal.id)}>Complete</a>
+                    <a
+                      className={`text-blue-500 hover:text-blue-700 cursor-pointer`}
+                      onClick={() => handleChangeGoalStatus(goal.id, goal.status)}
+                    >
+                      {goal.status === 'complete' ? 'Mark as Incomplete' : 'Mark as Complete'}
+                    </a>
                   </td>
                 </tr>
               ))}

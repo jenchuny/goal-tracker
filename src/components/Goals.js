@@ -8,23 +8,30 @@ function Goals() {
   const [goals, setGoals] = useState([]);
   const [newGoals, setNewGoals] = useState(['', '', '']);
 
+  // useEffect(() => {
+  //   if (authUser) {
+  //     fetchGoals(authUser.uid)
+  //       .then((userGoals) => {
+  //         setGoals(userGoals);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error fetching goals:', error);
+  //       });
+  //   }
+  // }, [authUser]);
+
   useEffect(() => {
     if (authUser) {
-      fetchGoals(authUser.uid)
-        .then((userGoals) => {
-          setGoals(userGoals);
-        })
-        .catch((error) => {
-          console.error('Error fetching goals:', error);
-        });
+      fetchGoals(authUser.uid);
     }
-  }, [authUser]);
+  }, []); // Empty dependency array for initial load
+  
 
-  const fetchGoals = async () => {
+  const fetchGoals = async (userId) => {
     try {
       if (!authUser) return; // Return early if no user is logged in
   
-      const q = query(goalsCollection, where('userId', '==', authUser.uid), orderBy('timestamp'));
+      const q = query(goalsCollection, where('userId', '==', userId), orderBy('timestamp'));
       const querySnapshot = await getDocs(q);
       const goalsData = [];
   
@@ -32,12 +39,12 @@ function Goals() {
         goalsData.push({ id: doc.id, ...doc.data() });
       });
 
-      console.log('Fetched goals:', goalsData);
-      setGoals(goalsData);
+      setGoals(goalsData); // Update the state with fetched goals
     } catch (error) {
       console.error('Error fetching goals: ', error);
     }
   };
+
 
   const handleAddGoal = async () => {
     const trimmedGoals = newGoals.map((goal) => goal.trim());
@@ -56,7 +63,7 @@ function Goals() {
 
       await Promise.all(goalPromises);
       setNewGoals(['', '', '']); // Clear input fields
-      fetchGoals();
+      fetchGoals(authUser.uid);
     }
   };
 
