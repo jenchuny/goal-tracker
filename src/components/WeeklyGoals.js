@@ -101,12 +101,12 @@ function WeeklyGoals() {
       const goalRef = doc(goalsCollection, goalId);
   
       // Update the points for the goal in Firestore
-      await updateDoc(goalRef, { points: newPoints });
+      await updateDoc(goalRef, { assignedPoints: newPoints });
   
       // Update the local state to reflect the change
       setWeekGoals((prevGoals) =>
         prevGoals.map((goal) =>
-          goal.id === goalId ? { ...goal, points: newPoints } : goal
+          goal.id === goalId ? { ...goal, assignedPoints: newPoints } : goal
         )
       );
     } catch (error) {
@@ -195,7 +195,7 @@ return (
         </div>
   
       {weekGoals && weekGoals.length > 0 ? (
-    <WeeklyGoalsTable weekGoals={weekGoals} />
+    <WeeklyGoalsTable goals={weekGoals} />
   ) : (
     <p>No goals available.</p>
   )}
