@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import Navigation from './components/Navigation';
+import Points from './components/Points';
 import { AuthProvider } from './components/AuthContext'; // Adjust the path to your AuthContext.js
 import WeeklyGoals from './components/WeeklyGoals';
 
@@ -24,7 +25,7 @@ function App() {
         <Route path="/goals" element={<Goals/>} />
         <Route path="/login" element={<LoginPage/>} />
         <Route path="/this-week" element={<WeeklyGoals/>} />
-  
+        <Route path="/points" element={<Points/>} />
       </Routes>
   </Router>
   </AuthProvider>

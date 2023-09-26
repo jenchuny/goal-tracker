@@ -36,6 +36,7 @@ function Navigation() {
               <>
                 <Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/goals" aria-current="page">Goals</Link>
                 <Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/this-week" aria-current="page">This Week</Link>
+                <Link class="font-medium text-white/[.8] hover:text-white sm:py-6" to="/points" aria-current="page">Points</Link>
               </>
             ) : null}
 
