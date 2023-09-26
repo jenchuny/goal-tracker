@@ -16,8 +16,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const goalsCollection = collection(db, 'goals');
+const userCollection = collection(db, 'users');
+const rewardCollection = collection(db, 'rewards');
 
 console.log('Firebase module is loaded.');
 
 
-export { auth, db, goalsCollection };
+export { auth, db, goalsCollection, userCollection, rewardCollection };

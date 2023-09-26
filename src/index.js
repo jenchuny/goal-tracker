@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css'; //import tailwind
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { auth, db, goalsCollection } from './firebaseUtils';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
