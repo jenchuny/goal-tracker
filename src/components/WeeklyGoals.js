@@ -3,6 +3,7 @@ import { getDocs, query, where, doc, updateDoc, addDoc } from 'firebase/firestor
 import { goalsCollection } from '../firebaseUtils';
 import { useAuth } from './AuthContext';
 import { startOfWeek, endOfWeek } from 'date-fns';
+import { TodoCard } from './Card';
 
 function WeeklyGoals() {
   const [weekGoals, setWeekGoals] = useState([]);
@@ -115,6 +116,10 @@ function WeeklyGoals() {
   };
 
 
+  const TH = ({children}) => {
+    return <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{children}</th>
+  }
+
   // Render the goals in a table similar to your previous component
   const WeeklyGoalsTable = ({ goals }) => {
     return (
@@ -124,7 +129,7 @@ function WeeklyGoals() {
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead>
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date Created</th>
+                <TH>Date Created</TH>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Goal</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
@@ -176,9 +181,15 @@ function WeeklyGoals() {
 }
 
 return (
+
+  // <TodoCard
+  // title={'💜 Complete section 2 in my Udemy course'}
+  // checked={false}
+  // points={5}
+  // />
+
   <div className="container mx-auto py-4">
-  
-  <div class="flex rounded-md shadow-sm">
+    <div class="flex rounded-md shadow-sm">
           {newGoals.map((goal, index) => (
             <input
               key={index}
@@ -192,18 +203,21 @@ return (
             />
           ))}
           <button class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm" onClick={handleAddGoal}>Add Goals</button>
-        </div>
+    </div>
   
-      {weekGoals && weekGoals.length > 0 ? (
-    <WeeklyGoalsTable goals={weekGoals} />
-  ) : (
-    <p>No goals available.</p>
-  )}
   
-    
-      </div>
+    {weekGoals && weekGoals.length > 0 ? (
+      <WeeklyGoalsTable goals={weekGoals} />
+        ) : (
+          <p>No goals available.</p>
+      )}
   
+      
+      
+
+    </div>
     );
+    
   }
 
 export default WeeklyGoals;
