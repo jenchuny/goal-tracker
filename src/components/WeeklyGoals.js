@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getDocs, query, where, doc, updateDoc, addDoc } from 'firebase/firestore';
-import { goalsCollection } from '../firebaseUtils';
+import { getDocs, query, where, doc, updateDoc, addDoc, getDoc } from 'firebase/firestore';
+import { goalsCollection, userCollection } from '../firebaseUtils';
 import { useAuth } from './AuthContext';
 import { startOfWeek, endOfWeek } from 'date-fns';
 import { TodoCard } from './Card';
@@ -82,20 +82,48 @@ function WeeklyGoals() {
     try {
       const goalRef = doc(goalsCollection, goalId);
       const newStatus = currentStatus === 'complete' ? 'incomplete' : 'complete';
+  
+      // Fetch the goal document to get assigned points
+      const goalDoc = await getDoc(goalRef);
+  
+      if (!goalDoc.exists()) {
+        console.error('Goal document does not exist.');
+        return;
+      }
+  
+      const goalData = goalDoc.data();
+      const assignedPoints = Number(goalData.assignedPoints); // Convert to a number   
+  
+      // Calculate the points change based on the status
+      let pointsChange = 0;
 
+      if (currentStatus === 'incomplete' && newStatus === 'complete') {
+        // Goal changed from incomplete to complete, add points to pointsChange
+        pointsChange = assignedPoints;
+      } else if (currentStatus === 'complete' && newStatus === 'incomplete') {
+        // Goal changed from complete to incomplete, subtract points from pointsChange
+        pointsChange = -assignedPoints;
+      }
+  
       // Update the status to the newStatus
       await updateDoc(goalRef, { status: newStatus });
-
+  
       // Update the local state to reflect the change and toggle the text
       setWeekGoals((prevGoals) =>
         prevGoals.map((goal) =>
           goal.id === goalId ? { ...goal, status: newStatus } : goal
         )
       );
+  
+      // Update the pointsEarned in the user's document based on the status change
+      if (authUser) {
+        await updatePointsEarned(authUser.uid, pointsChange);
+      }
     } catch (error) {
       console.error('Error toggling goal status:', error);
     }
   };
+  
 
   const handlePointsChange = async (goalId, newPoints) => {
     try {
@@ -114,6 +142,26 @@ function WeeklyGoals() {
       console.error('Error updating points for goal:', error);
     }
   };
+
+  const updatePointsEarned = async (userId, pointsChange) => {
+    try {
+      const userRef = doc(userCollection, userId);
+  
+      // Fetch the user document
+      const userDoc = await getDoc(userRef);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const updatedPointsEarned = userData.pointsEarned + pointsChange;
+  
+        // Update the pointsEarned in the user's document
+        await updateDoc(userRef, { pointsEarned: updatedPointsEarned });
+      }
+    } catch (error) {
+      console.error('Error updating pointsEarned:', error);
+    }
+  };
+  
 
 
   const TH = ({children}) => {
@@ -155,16 +203,17 @@ function WeeklyGoals() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   {goal.status !== 'complete' ? (
         <div>
-          <select
-            value={goal.points}
-            onChange={(e) => handlePointsChange(goal.id, e.target.value)}
-          >
-            <option value="1">1 point</option>
-            <option value="2">2 points</option>
-            <option value="3">3 points</option>
-            <option value="4">4 points</option>
-            <option value="5">5 points</option>
-          </select>
+<select
+  value={goal.assignedPoints} // Use assignedPoints
+  onChange={(e) => handlePointsChange(goal.id, e.target.value)}
+>
+  <option value="1">1 point</option>
+  <option value="2">2 points</option>
+  <option value="3">3 points</option>
+  <option value="4">4 points</option>
+  <option value="5">5 points</option>
+</select>
+
         </div>
       ) : (
         'N/A'

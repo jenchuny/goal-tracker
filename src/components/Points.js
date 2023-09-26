@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { getDocs, query, where } from 'firebase/firestore';
+import { getDoc, doc } from 'firebase/firestore';
 import { userCollection } from '../firebaseUtils'; 
 
 function Points() {
@@ -19,15 +19,13 @@ function Points() {
   const fetchPoints = async (userId) => {
     try {
       if (!authUser) return; // Return early if no user is not logged in
-
-      const q = query(userCollection, where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
-
-      if (querySnapshot.size > 0) {
-        // Assuming there's only one matching document for the user
-        const userDoc = querySnapshot.docs[0];
+  
+      const userRef = doc(userCollection, userId); // Use userId as the document ID
+      const userDoc = await getDoc(userRef);
+  
+      if (userDoc.exists()) {
         const userData = userDoc.data();
-
+  
         setPoints({
           pointsEarned: userData.pointsEarned || 0,
           pointsRedeemed: userData.pointsRedeemed || 0,
@@ -40,11 +38,12 @@ function Points() {
       console.error('Error fetching points: ', error);
     }
   };
+  
     
   return (
     <div>
       <h1>Your Points</h1>
-      <p>Assigned Points: {points.pointsEarned}</p>
+      <p>Points Earned: {points.pointsEarned}</p>
       <p>Redeemed Points: {points.pointsRedeemed}</p>
     </div>
   );

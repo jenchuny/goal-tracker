@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const goalsCollection = collection(db, 'goals');
-const userCollection = collection(db, 'users');
+const userCollection = collection(db, 'user');
 const rewardCollection = collection(db, 'rewards');
 
 console.log('Firebase module is loaded.');
