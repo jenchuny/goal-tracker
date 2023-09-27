@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { getDocs, query, where, addDoc } from 'firebase/firestore';
+import { getDocs, query, where, addDoc, updateDoc, doc } from 'firebase/firestore';
 import { rewardsCollection } from '../firebaseUtils';
 import { useAuth } from './AuthContext';
 
 function Rewards() {
   const [unredeemedRewards, setUnredeemedRewards] = useState([]);
   const { authUser } = useAuth();
-  const [newReward, setNewReward] = useState([]);
-  const [selectedPoints, setSelectedPoints] = useState(1); // Initialize with a default value
+  const [newReward, setNewReward] = useState('');
+  const [selectedPoints, setSelectedPoints] = useState(1);
 
   useEffect(() => {
     if (authUser) {
@@ -19,8 +19,7 @@ function Rewards() {
           console.error('Error fetching this user rewards:', error);
         });
     }
-  }, [authUser, unredeemedRewards]); // Add unredeemedRewards as a dependency
-  
+  }, [authUser, unredeemedRewards]);
 
   const fetchUnredeemedRewards = async (userId) => {
     try {
@@ -49,57 +48,76 @@ function Rewards() {
     const trimmedReward = newReward.trim();
     if (trimmedReward && authUser) {
       const rewardData = {
-        rewardName: trimmedReward, // Use the trimmed input value as rewardName
+        rewardName: trimmedReward,
         timestamp: new Date(),
         userId: authUser.uid,
         redeemed: false,
-        assignedPoints: selectedPoints, // Assign the selected points
+        assignedPoints: selectedPoints,
       };
 
       try {
         await addDoc(rewardsCollection, rewardData);
-        setNewReward(''); // Clear the input field by resetting the newReward state
-        setSelectedPoints(1); // Reset the selected points to the default value
+        setNewReward('');
+        setSelectedPoints(1);
         fetchUnredeemedRewards(authUser.uid);
       } catch (error) {
         console.error('Error adding reward: ', error);
       }
     }
   };
-  
+
+  const markRewardAsRedeemed = async (rewardId) => {
+    try {
+      const rewardRef = doc(rewardsCollection, rewardId);
+      await updateDoc(rewardRef, { redeemed: true });
+      fetchUnredeemedRewards(authUser.uid);
+    } catch (error) {
+      console.error('Error marking reward as redeemed: ', error);
+    }
+  };
 
 
-  // Render the goals in a table similar to your previous component
   const UnredeemedRewardsTable = ({ rewards }) => {
     return (
-    <div className="container mx-auto py-4">
-      <div className="p-1.5 min-w-full inline-block align-middle">
-        <div className="border rounded-lg overflow-hidden dark:border-gray-700">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead>
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reward</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {unredeemedRewards.map((reward) => (
-                <tr key={reward.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.rewardName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.assignedPoints}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.redeemed ? 'Redeemed' : 'Not Redeemed'}</td>
+      <div className="container mx-auto py-4">
+        <div className="p-1.5 min-w-full inline-block align-middle">
+          <div className="border rounded-lg overflow-hidden dark:border-gray-700">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead>
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reward</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {rewards.map((reward) => (
+                  <tr key={reward.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.rewardName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.assignedPoints}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.redeemed ? 'Redeemed' : 'Not Redeemed'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                      {!reward.redeemed && (
+                        <button
+                          className="text-blue-500 hover:text-blue-600"
+                          onClick={() => markRewardAsRedeemed(reward.id)}
+                        >
+                          Mark Redeemed
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-return (
+  return (
     <div className="container mx-auto py-4">
       <label htmlFor="reward-input" className="sr-only">Reward</label>
       <div className="flex rounded-md shadow-sm">
