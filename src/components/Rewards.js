@@ -7,6 +7,7 @@ function Rewards() {
   const [unredeemedRewards, setUnredeemedRewards] = useState([]);
   const { authUser } = useAuth();
   const [newReward, setNewReward] = useState([]);
+  const [selectedPoints, setSelectedPoints] = useState(1); // Initialize with a default value
 
   useEffect(() => {
     if (authUser) {
@@ -52,12 +53,13 @@ function Rewards() {
         timestamp: new Date(),
         userId: authUser.uid,
         redeemed: false,
-        assignedPoints: 0,
+        assignedPoints: selectedPoints, // Assign the selected points
       };
 
       try {
         await addDoc(rewardsCollection, rewardData);
         setNewReward(''); // Clear the input field by resetting the newReward state
+        setSelectedPoints(1); // Reset the selected points to the default value
         fetchUnredeemedRewards(authUser.uid);
       } catch (error) {
         console.error('Error adding reward: ', error);
@@ -98,40 +100,47 @@ function Rewards() {
 }
 
 return (
+    <div className="container mx-auto py-4">
+      <label htmlFor="reward-input" className="sr-only">Reward</label>
+      <div className="flex rounded-md shadow-sm">
+        <input
+          type="text"
+          id="reward-input"
+          name="reward-input"
+          className="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+          value={newReward}
+          onChange={(e) => setNewReward(e.target.value)}
+          placeholder="Enter your reward"
+        />
+        <select
+          id="points-select"
+          name="points-select"
+          className="py-3 px-4 block border-gray-200 shadow-sm rounded-r-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+          value={selectedPoints}
+          onChange={(e) => setSelectedPoints(parseInt(e.target.value))}
+        >
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+        <button
+          type="button"
+          className="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
+          onClick={handleAddReward}
+        >
+          Add Reward
+        </button>
+      </div>
 
-<div className="container mx-auto py-4">
-<label for="hs-trailing-button-add-on" class="sr-only">Label</label>
-<div class="flex rounded-md shadow-sm">
-  <input
-    type="text"
-    id="hs-trailing-button-add-on"
-    name="hs-trailing-button-add-on"
-    class="py-3 px-4 block w-full border-gray-200 shadow-sm rounded-l-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-    value={newReward} // Bind the input value to newReward
-    onChange={(e) => setNewReward(e.target.value)} // Update newReward when input changes
-  />
-  <button
-    type="button"
-    class="py-3 px-4 inline-flex flex-shrink-0 justify-center items-center gap-2 rounded-r-md border border-transparent font-semibold bg-blue-500 text-white hover:bg-blue-600 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm"
-    onClick={handleAddReward}
-  >
-    Add Reward
-  </button>
-</div>
-  
-    {unredeemedRewards && unredeemedRewards.length > 0 ? (
-      <UnredeemedRewardsTable rewards={unredeemedRewards} />
-        ) : (
-          <p>No rewards available.</p>
+      {unredeemedRewards && unredeemedRewards.length > 0 ? (
+        <UnredeemedRewardsTable rewards={unredeemedRewards} />
+      ) : (
+        <p>No rewards available.</p>
       )}
-  
-      
-      
-
     </div>
-
-    );
-    
-  }
+  );
+}
 
 export default Rewards;
