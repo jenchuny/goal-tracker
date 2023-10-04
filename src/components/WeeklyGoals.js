@@ -230,7 +230,7 @@ function WeeklyGoals() {
 }
 
 return (
-  <div className="container mx-auto py-4">
+  <div className="w-full pt-10 px-4 sm:px-6 md:px-8 lg:pl-72">
       {/* <TodoCard
   title={'💜 Complete section 2 in my Udemy course'}
   checked={false}
