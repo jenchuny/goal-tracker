@@ -1,4 +1,16 @@
 @import 'tailwindcss/utilities';
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&Epilogue:wght@400;600;800&display=swap');;
+
+body {
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+h1, h2, h3 {
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+}
 
 .App {
   text-align: left;

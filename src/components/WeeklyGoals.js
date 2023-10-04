@@ -230,14 +230,12 @@ function WeeklyGoals() {
 }
 
 return (
-
-  // <TodoCard
-  // title={'💜 Complete section 2 in my Udemy course'}
-  // checked={false}
-  // points={5}
-  // />
-
   <div className="container mx-auto py-4">
+      {/* <TodoCard
+  title={'💜 Complete section 2 in my Udemy course'}
+  checked={false}
+  points={5}
+  />  */}
     <div class="flex rounded-md shadow-sm">
           {newGoals.map((goal, index) => (
             <input
