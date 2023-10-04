@@ -79,6 +79,9 @@ function Navigation() {
           Points
         </Link></li>
       </ul>
+
+      <AuthDetails></AuthDetails>
+
     </nav>
   </div>
 
