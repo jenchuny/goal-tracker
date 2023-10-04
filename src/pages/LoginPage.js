@@ -23,8 +23,8 @@ function LoginPage() {
   };
 
   return (
-    <html class="h-full">
-    <body class="dark:bg-slate-900 bg-gray-100 flex h-full items-center py-16">
+    <html class="w-full">
+    <body class="dark:bg-slate-900 bg-gray-100 w-full pt-10 px-4 sm:px-6 md:px-8 lg:pl-72"> 
       <main class="w-full max-w-md mx-auto p-6">
         <div class="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
           <div class="p-4 sm:p-7">

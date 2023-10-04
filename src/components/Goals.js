@@ -33,7 +33,7 @@ function Goals() {
   };
     
     return (
-      <div className="flex flex-co py-4">
+      <div className="w-full pt-10 px-4 sm:px-6 md:px-8 lg:pl-72">
         <div className="-m-1.5 overflow-x-auto">
           <div className="p-1.5 min-w-full inline-block align-middle">
             <div className="border rounded-lg overflow-hidden dark:border-gray-700">
