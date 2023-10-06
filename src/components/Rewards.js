@@ -4,40 +4,39 @@ import { rewardsCollection } from '../firebaseUtils';
 import { useAuth } from './AuthContext';
 
 function Rewards() {
-  const [unredeemedRewards, setUnredeemedRewards] = useState([]);
+  const [rewards, setRewards] = useState([]);
   const { authUser } = useAuth();
   const [newReward, setNewReward] = useState('');
   const [selectedPoints, setSelectedPoints] = useState(1);
 
   useEffect(() => {
     if (authUser) {
-      fetchUnredeemedRewards(authUser.uid)
-        .then((userUnredeemedGoals) => {
-          setUnredeemedRewards(userUnredeemedGoals);
+      fetchRewards(authUser.uid)
+        .then((userRewards) => {
+          setRewards(userRewards);
         })
         .catch((error) => {
           console.error('Error fetching this user rewards:', error);
         });
     }
-  }, [authUser, unredeemedRewards]);
+  }, [authUser, rewards]);
 
-  const fetchUnredeemedRewards = async (userId) => {
+  const fetchRewards = async (userId) => {
     try {
       if (!userId) return [];
       const q = query(
         rewardsCollection,
-        where('userId', '==', userId),
-        where('redeemed', '==', false)
+        where('userId', '==', userId)
       );
 
       const querySnapshot = await getDocs(q);
-      const unredeemedRewardsData = [];
+      const rewardsData = [];
 
       querySnapshot.forEach((doc) => {
-        unredeemedRewardsData.push({ id: doc.id, ...doc.data() });
+        rewardsData.push({ id: doc.id, ...doc.data() });
       });
 
-      return unredeemedRewardsData;
+      return rewardsData;
     } catch (error) {
       console.error('Error fetching rewards: ', error);
       return [];
@@ -59,7 +58,7 @@ function Rewards() {
         await addDoc(rewardsCollection, rewardData);
         setNewReward('');
         setSelectedPoints(1);
-        fetchUnredeemedRewards(authUser.uid);
+        fetchRewards(authUser.uid);
       } catch (error) {
         console.error('Error adding reward: ', error);
       }
@@ -70,14 +69,14 @@ function Rewards() {
     try {
       const rewardRef = doc(rewardsCollection, rewardId);
       await updateDoc(rewardRef, { redeemed: true });
-      fetchUnredeemedRewards(authUser.uid);
+      fetchRewards(authUser.uid);
     } catch (error) {
       console.error('Error marking reward as redeemed: ', error);
     }
   };
 
 
-  const UnredeemedRewardsTable = ({ rewards }) => {
+  const RewardsTable = ({ rewards }) => {
     return (
       <div className="container mx-auto py-4">
         <div className="p-1.5 min-w-full inline-block align-middle">
@@ -152,8 +151,8 @@ function Rewards() {
         </button>
       </div>
 
-      {unredeemedRewards && unredeemedRewards.length > 0 ? (
-        <UnredeemedRewardsTable rewards={unredeemedRewards} />
+      {rewards && rewards.length > 0 ? (
+        <RewardsTable rewards={rewards} />
       ) : (
         <p>No rewards available.</p>
       )}
