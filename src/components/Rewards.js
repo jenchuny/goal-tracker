@@ -20,7 +20,7 @@ function Rewards() {
           console.error('Error fetching this user rewards:', error);
         });
     }
-  }, [authUser, rewards]);
+  }, [authUser]); // Removed rewards from here
 
   const fetchRewards = async (userId) => {
     try {
@@ -54,12 +54,12 @@ function Rewards() {
         redeemed: false,
         assignedPoints: selectedPoints,
       };
-
+  
       try {
-        await addDoc(rewardsCollection, rewardData);
+        const docRef = await addDoc(rewardsCollection, rewardData);
         setNewReward('');
         setSelectedPoints(1);
-        fetchRewards(authUser.uid);
+        setRewards(oldRewards => [...oldRewards, { id: docRef.id, ...rewardData }]);
         setShowModal(false);
       } catch (error) {
         console.error('Error adding reward: ', error);
@@ -71,7 +71,7 @@ function Rewards() {
     try {
       const rewardRef = doc(rewardsCollection, rewardId);
       await updateDoc(rewardRef, { redeemed: true });
-      fetchRewards(authUser.uid);
+      setRewards(oldRewards => oldRewards.map(reward => reward.id === rewardId ? { ...reward, redeemed: true } : reward));
     } catch (error) {
       console.error('Error marking reward as redeemed: ', error);
     }
