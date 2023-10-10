@@ -79,7 +79,7 @@ function Rewards() {
 
   function RewardCard({ reward, onRedeem }) {
     return (
-      <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] w-80">
+      <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] w-full">
         <div className="md:p-5">
           <h3 className="text-lg font-bold text-gray-800 dark:text-white">
             {reward.rewardName}
@@ -105,7 +105,7 @@ function Rewards() {
 
   function RewardsTable({ rewards, onRedeem }) {
     return (
-      <div className="flex flex-wrap gap-4 w-11/12 mx-auto">
+      <div className="flex flex-wrap gap-4 w-full mx-auto">
         {rewards.map((reward) => (
           <RewardCard key={reward.id} reward={reward} onRedeem={onRedeem} />
         ))}
@@ -115,7 +115,7 @@ function Rewards() {
 
   return (
     <div class ="w-full pt-10 px-4 sm:px-6 md:px-10 lg:pl-72 pb-10">
-      <div className="flex justify-between items-center w-11/12 mx-auto">
+      <div className="flex justify-between items-center w-full mx-auto">
         <h1 className="text-3xl font-semibold">Rewards</h1>
         <button
           type="button"
