@@ -77,49 +77,45 @@ function Rewards() {
     }
   };
 
-  const RewardsTable = ({ rewards }) => {
+  function RewardCard({ reward, onRedeem }) {
     return (
-      <div className="container mx-auto py-4">
-        <div className="p-1.5 min-w-full inline-block align-middle">
-          <div className="border rounded-lg overflow-hidden dark:border-gray-700">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead>
-                <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reward</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {rewards.map((reward) => (
-                  <tr key={reward.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.rewardName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.assignedPoints}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{reward.redeemed ? 'Redeemed' : 'Not Redeemed'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                      {!reward.redeemed && (
-                        <button
-                          className="text-blue-500 hover:text-blue-600"
-                          onClick={() => markRewardAsRedeemed(reward.id)}
-                        >
-                          Mark Redeemed
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] w-80">
+        <div className="p-4 md:p-10">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-white">
+            {reward.rewardName}
+          </h3>
+          <p className="mt-2 text-gray-800 dark:text-gray-400">
+            Assigned Points: {reward.assignedPoints}
+          </p>
+          {!reward.redeemed && (
+            <button
+              className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-blue-500 hover:text-blue-700"
+              onClick={() => onRedeem(reward.id)}
+            >
+              Mark as Redeemed
+              <svg className="w-2.5 h-auto" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 1L10.6869 7.16086C10.8637 7.35239 10.8637 7.64761 10.6869 7.83914L5 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
     );
   }
 
+  function RewardsTable({ rewards, onRedeem }) {
+    return (
+      <div className="flex flex-wrap gap-4 w-11/12 mx-auto">
+        {rewards.map((reward) => (
+          <RewardCard key={reward.id} reward={reward} onRedeem={onRedeem} />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div class ="w-full pt-10 px-4 sm:px-6 md:px-8 lg:pl-72">
-      <div className="flex justify-between items-center">
+    <div class ="w-full pt-10 px-4 sm:px-6 md:px-8 lg:pl-72 pb-10">
+      <div className="flex justify-between items-center w-11/12 mx-auto">
         <h1 className="text-3xl font-semibold">Rewards</h1>
         <button
           type="button"
@@ -197,8 +193,8 @@ function Rewards() {
         </div>
       ) : null}
 
-      {rewards && rewards.length > 0 ? (
-        <RewardsTable rewards={rewards} />
+    {rewards && rewards.length > 0 ? (
+        <RewardsTable rewards={rewards} onRedeem={markRewardAsRedeemed} />
       ) : (
         <p>No rewards available.</p>
       )}
