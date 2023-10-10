@@ -80,7 +80,7 @@ function Rewards() {
   function RewardCard({ reward, onRedeem }) {
     return (
       <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] w-80">
-        <div className="p-4 md:p-10">
+        <div className="md:p-5">
           <h3 className="text-lg font-bold text-gray-800 dark:text-white">
             {reward.rewardName}
           </h3>
@@ -89,7 +89,7 @@ function Rewards() {
           </p>
           {!reward.redeemed && (
             <button
-              className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-blue-500 hover:text-blue-700"
+              className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-orange-500 hover:text-orange-700"
               onClick={() => onRedeem(reward.id)}
             >
               Mark as Redeemed
@@ -114,7 +114,7 @@ function Rewards() {
   }
 
   return (
-    <div class ="w-full pt-10 px-4 sm:px-6 md:px-8 lg:pl-72 pb-10">
+    <div class ="w-full pt-10 px-4 sm:px-6 md:px-10 lg:pl-72 pb-10">
       <div className="flex justify-between items-center w-11/12 mx-auto">
         <h1 className="text-3xl font-semibold">Rewards</h1>
         <button
