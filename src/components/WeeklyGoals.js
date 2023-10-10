@@ -9,6 +9,7 @@ function WeeklyGoals() {
   const [weekGoals, setWeekGoals] = useState([]);
   const { authUser } = useAuth();
   const [newGoals, setNewGoals] = useState(['', '', '']);
+  const [userPoints, setUserPoints] = useState(0);
 
   useEffect(() => {
     if (authUser) {
@@ -18,6 +19,13 @@ function WeeklyGoals() {
         })
         .catch((error) => {
           console.error('Error fetching this week\'s goals:', error);
+        });
+      fetchUserPoints(authUser.uid)
+        .then((points) => {
+          setUserPoints(points);
+        })
+        .catch((error) => {
+          console.error('Error fetching user points:', error);
         });
     }
   }, [authUser]);
@@ -47,6 +55,22 @@ function WeeklyGoals() {
     } catch (error) {
       console.error('Error fetching this week\'s goals: ', error);
       return [];
+    }
+  };
+
+  const fetchUserPoints = async (userId) => {
+    try {
+      const userRef = doc(userCollection, userId);
+  
+      // Fetch the user document
+      const userDoc = await getDoc(userRef);
+  
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return userData.pointsEarned;
+      }
+    } catch (error) {
+      console.error('Error fetching user points:', error);
     }
   };
 
@@ -117,7 +141,7 @@ function WeeklyGoals() {
   
       // Update the pointsEarned in the user's document based on the status change
       if (authUser) {
-        await updatePointsEarned(authUser.uid, pointsChange);
+        setUserPoints(userPoints + pointsChange);
       }
     } catch (error) {
       console.error('Error toggling goal status:', error);
@@ -142,27 +166,6 @@ function WeeklyGoals() {
       console.error('Error updating points for goal:', error);
     }
   };
-
-  const updatePointsEarned = async (userId, pointsChange) => {
-    try {
-      const userRef = doc(userCollection, userId);
-  
-      // Fetch the user document
-      const userDoc = await getDoc(userRef);
-  
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const updatedPointsEarned = userData.pointsEarned + pointsChange;
-  
-        // Update the pointsEarned in the user's document
-        await updateDoc(userRef, { pointsEarned: updatedPointsEarned });
-      }
-    } catch (error) {
-      console.error('Error updating pointsEarned:', error);
-    }
-  };
-  
-
 
   const TH = ({children}) => {
     return <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{children}</th>
