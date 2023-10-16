@@ -5,6 +5,8 @@ import { useAuth } from './AuthContext';
 
 function Rewards() {
   const [rewards, setRewards] = useState([]);
+  const [redeemedRewards, setRedeemedRewards] = useState([]);
+  const [unredeemedRewards, setUnredeemedRewards] = useState([]);
   const { authUser } = useAuth();
   const [newReward, setNewReward] = useState('');
   const [selectedPoints, setSelectedPoints] = useState(1);
@@ -15,12 +17,17 @@ function Rewards() {
       fetchRewards(authUser.uid)
         .then((userRewards) => {
           setRewards(userRewards);
+          const redeemed = userRewards.filter(reward => reward.redeemed);
+          const unredeemed = userRewards.filter(reward => !reward.redeemed);
+          setRedeemedRewards(redeemed);
+          setUnredeemedRewards(unredeemed);
         })
         .catch((error) => {
           console.error('Error fetching this user rewards:', error);
         });
     }
-  }, [authUser]); // Removed rewards from here
+  }, [authUser]);
+
 
   const fetchRewards = async (userId) => {
     try {
@@ -193,14 +200,23 @@ function Rewards() {
         </div>
       ) : null}
 
-    {rewards && rewards.length > 0 ? (
-        <RewardsTable rewards={rewards} onRedeem={markRewardAsRedeemed} />
+<h2 className="text-2xl font-semibold mt-8">Unredeemed Rewards</h2>
+      {unredeemedRewards && unredeemedRewards.length > 0 ? (
+        <RewardsTable rewards={unredeemedRewards} onRedeem={markRewardAsRedeemed} />
       ) : (
-        <p>No rewards available.</p>
+        <p>No unredeemed rewards available.</p>
       )}
-    </div>
+
+      <h2 className="text-2xl font-semibold mt-8">Redeemed Rewards</h2>
+      {redeemedRewards && redeemedRewards.length > 0 ? (
+        <RewardsTable rewards={redeemedRewards} onRedeem={markRewardAsRedeemed} />
+      ) : (
+        <p>No redeemed rewards available.</p>
+      )}
+      </div>
   );
 }
 
 export default Rewards;
+
 
