@@ -5,6 +5,8 @@ import { useAuth } from './AuthContext';
 
 function Rewards() {
   const [rewards, setRewards] = useState([]);
+  const [redeemedRewards, setRedeemedRewards] = useState([]);
+  const [unredeemedRewards, setUnredeemedRewards] = useState([]);
   const { authUser } = useAuth();
   const [newReward, setNewReward] = useState('');
   const [selectedPoints, setSelectedPoints] = useState(1);
@@ -15,12 +17,17 @@ function Rewards() {
       fetchRewards(authUser.uid)
         .then((userRewards) => {
           setRewards(userRewards);
+          const redeemed = userRewards.filter(reward => reward.redeemed);
+          const unredeemed = userRewards.filter(reward => !reward.redeemed);
+          setRedeemedRewards(redeemed);
+          setUnredeemedRewards(unredeemed);
         })
         .catch((error) => {
           console.error('Error fetching this user rewards:', error);
         });
     }
-  }, [authUser]); // Removed rewards from here
+  }, [authUser]);
+
 
   const fetchRewards = async (userId) => {
     try {
@@ -79,7 +86,7 @@ function Rewards() {
 
   function RewardCard({ reward, onRedeem }) {
     return (
-      <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] w-80">
+      <div className="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7] w-full">
         <div className="md:p-5">
           <h3 className="text-lg font-bold text-gray-800 dark:text-white">
             {reward.rewardName}
@@ -105,7 +112,7 @@ function Rewards() {
 
   function RewardsTable({ rewards, onRedeem }) {
     return (
-      <div className="flex flex-wrap gap-4 w-11/12 mx-auto">
+      <div className="flex flex-wrap gap-4 w-full mx-auto">
         {rewards.map((reward) => (
           <RewardCard key={reward.id} reward={reward} onRedeem={onRedeem} />
         ))}
@@ -115,7 +122,7 @@ function Rewards() {
 
   return (
     <div class ="w-full pt-10 px-4 sm:px-6 md:px-10 lg:pl-72 pb-10">
-      <div className="flex justify-between items-center w-11/12 mx-auto">
+      <div className="flex justify-between items-center w-full mx-auto">
         <h1 className="text-3xl font-semibold">Rewards</h1>
         <button
           type="button"
@@ -193,14 +200,23 @@ function Rewards() {
         </div>
       ) : null}
 
-    {rewards && rewards.length > 0 ? (
-        <RewardsTable rewards={rewards} onRedeem={markRewardAsRedeemed} />
+<h2 className="text-2xl font-semibold mt-8">Unredeemed Rewards</h2>
+      {unredeemedRewards && unredeemedRewards.length > 0 ? (
+        <RewardsTable rewards={unredeemedRewards} onRedeem={markRewardAsRedeemed} />
       ) : (
-        <p>No rewards available.</p>
+        <p>No unredeemed rewards available.</p>
       )}
-    </div>
+
+      <h2 className="text-2xl font-semibold mt-8">Redeemed Rewards</h2>
+      {redeemedRewards && redeemedRewards.length > 0 ? (
+        <RewardsTable rewards={redeemedRewards} onRedeem={markRewardAsRedeemed} />
+      ) : (
+        <p>No redeemed rewards available.</p>
+      )}
+      </div>
   );
 }
 
 export default Rewards;
+
 
