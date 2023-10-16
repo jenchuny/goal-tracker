@@ -7,6 +7,7 @@ function Rewards() {
   const [rewards, setRewards] = useState([]);
   const [redeemedRewards, setRedeemedRewards] = useState([]);
   const [unredeemedRewards, setUnredeemedRewards] = useState([]);
+  const [activeTab, setActiveTab] = useState('redeemed');
   const { authUser } = useAuth();
   const [newReward, setNewReward] = useState('');
   const [selectedPoints, setSelectedPoints] = useState(1);
@@ -135,6 +136,31 @@ function Rewards() {
           Add Reward
         </button>
       </div>
+      
+      <div class="border-b border-gray-200 dark:border-gray-700">
+        <nav class="flex space-x-2" aria-label="Tabs" role="tablist">
+          <button
+            type="button"
+            class={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 active ${activeTab === 'unredeemed' ? 'hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white' : ''}`}
+            onClick={() => setActiveTab('unredeemed')}
+          >
+            Unredeemed Rewards{' '}
+            <span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+              {unredeemedRewards.length}
+            </span>
+          </button>
+          <button
+            type="button"
+            class={`hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 active ${activeTab === 'redeemed' ? 'hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white' : ''}`}
+            onClick={() => setActiveTab('redeemed')}
+          >
+            Redeemed Rewards{' '}
+            <span class="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+              {redeemedRewards.length}
+            </span>
+          </button>
+        </nav>
+      </div>
 
       {showModal ? (
         <div className="fixed z-10 inset-0 overflow-y-auto mb-5" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -200,23 +226,27 @@ function Rewards() {
         </div>
       ) : null}
 
-<h2 className="text-2xl font-semibold mt-8">Unredeemed Rewards</h2>
-      {unredeemedRewards && unredeemedRewards.length > 0 ? (
-        <RewardsTable rewards={unredeemedRewards} onRedeem={markRewardAsRedeemed} />
-      ) : (
-        <p>No unredeemed rewards available.</p>
-      )}
-
-      <h2 className="text-2xl font-semibold mt-8">Redeemed Rewards</h2>
-      {redeemedRewards && redeemedRewards.length > 0 ? (
-        <RewardsTable rewards={redeemedRewards} onRedeem={markRewardAsRedeemed} />
-      ) : (
-        <p>No redeemed rewards available.</p>
-      )}
+<div class="mt-3">
+        <div id="unredeemed-rewards" class={activeTab === 'unredeemed' ? '' : 'hidden'} role="tabpanel" aria-labelledby="unredeemed-rewards-tab">
+          <div className="flex flex-wrap gap-4 w-full mx-auto">
+          {unredeemedRewards.map(reward => (
+            <RewardCard key={reward.id} reward={reward} onRedeem={markRewardAsRedeemed} />
+          ))}
+        </div>
+        </div>
+        <div id="redeemed-rewards" class={activeTab === 'redeemed' ? '' : 'hidden'} role="tabpanel" aria-labelledby="redeemed-rewards-tab">
+        <div className="flex flex-wrap gap-4 w-full mx-auto">
+          {redeemedRewards.map(reward => (
+            <RewardCard key={reward.id} reward={reward} onRedeem={markRewardAsRedeemed} />
+          ))}
+          </div>
+        </div>
+      </div>
       </div>
   );
 }
 
 export default Rewards;
+
 
 
