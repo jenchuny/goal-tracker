@@ -111,16 +111,6 @@ function Rewards() {
     );
   }
 
-  function RewardsTable({ rewards, onRedeem }) {
-    return (
-      <div className="flex flex-wrap gap-4 w-full mx-auto">
-        {rewards.map((reward) => (
-          <RewardCard key={reward.id} reward={reward} onRedeem={onRedeem} />
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div class ="w-full pt-10 px-4 sm:px-6 md:px-10 lg:pl-72 pb-10">
       <div className="flex justify-between items-center w-full mx-auto">
