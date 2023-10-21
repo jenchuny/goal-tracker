@@ -150,7 +150,7 @@ function WeeklyGoals() {
     return (
       <div className="w-full py-4">
         <div className="w-full inline-block align-middle">
-          <div className="border rounded-lg overflow-hidden dark:border-gray-700 space-y-4">
+          <div className="rounded-lg overflow-hidden space-y-4">
             {weekGoals.map((goal) => (
               <TodoCard key={goal.id} title={goal.text} handleChangeGoalStatus={handleChangeGoalStatus} points={goal.assignedPoints}/>
             ))}
@@ -258,3 +258,4 @@ return (
   }
 
 export default WeeklyGoals;
+
