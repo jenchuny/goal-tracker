@@ -148,8 +148,8 @@ function WeeklyGoals() {
   
   const WeeklyGoalsTable = ({ goals }) => {
     return (
-      <div className="container mx-auto py-4 px-4">
-        <div className="p-1.5 min-w-full inline-block align-middle">
+      <div className="w-full py-4">
+        <div className="w-full inline-block align-middle">
           <div className="border rounded-lg overflow-hidden dark:border-gray-700 space-y-4">
             {weekGoals.map((goal) => (
               <TodoCard key={goal.id} title={goal.text} handleChangeGoalStatus={handleChangeGoalStatus} points={goal.assignedPoints}/>
