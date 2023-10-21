@@ -146,86 +146,19 @@ function WeeklyGoals() {
     }
   };
   
-
-  // const handlePointsChange = async (goalId, newPoints) => {
-  //   try {
-  //     const goalRef = doc(goalsCollection, goalId);
-  
-  //     // Update the points for the goal in Firestore
-  //     await updateDoc(goalRef, { assignedPoints: newPoints });
-  
-  //     // Update the local state to reflect the change
-  //     setWeekGoals((prevGoals) =>
-  //       prevGoals.map((goal) =>
-  //         goal.id === goalId ? { ...goal, assignedPoints: newPoints } : goal
-  //       )
-  //     );
-  //   } catch (error) {
-  //     console.error('Error updating points for goal:', error);
-  //   }
-  // };
-
-
-  // Render the goals in a table similar to your previous component
   const WeeklyGoalsTable = ({ goals }) => {
     return (
-    <div className="container mx-auto py-4">
-      <div className="p-1.5 min-w-full inline-block align-middle">
-        <div className="border rounded-lg overflow-hidden dark:border-gray-700">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead>
-              <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date created</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Goal</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Points</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
-                {/* <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Assign Points</th> */}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {weekGoals.map((goal) => (
-                <tr key={goal.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">{goal.timestamp.toDate().toLocaleDateString()}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{goal.text}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{goal.assignedPoints}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{goal.status}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a
-                      className={`text-blue-500 hover:text-blue-700 cursor-pointer`}
-                      onClick={() => handleChangeGoalStatus(goal.id, goal.status)}
-                    >
-                      {goal.status === 'complete' ? 'Mark as Incomplete' : 'Mark as Complete'}
-                    </a>
-                  </td>
-                  {/* <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  {goal.status !== 'complete' ? (
-        <div>
-<select
-  value={goal.assignedPoints} // Use assignedPoints
-  onChange={(e) => handlePointsChange(goal.id, e.target.value)}
->
-  <option value="1">1 point</option>
-  <option value="2">2 points</option>
-  <option value="3">3 points</option>
-  <option value="4">4 points</option>
-  <option value="5">5 points</option>
-</select>
-
-        </div>
-      ) : (
-        'N/A'
-      )}
-                  </td> */}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div className="w-full py-4">
+        <div className="w-full inline-block align-middle">
+          <div className="rounded-lg overflow-hidden space-y-4">
+            {weekGoals.map((goal) => (
+              <TodoCard key={goal.id} title={goal.text} handleChangeGoalStatus={handleChangeGoalStatus} points={goal.assignedPoints}/>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  };
 
 return (
   <div class ="w-full pt-10 px-4 sm:px-6 md:px-10 lg:pl-72 pb-10">
@@ -325,3 +258,4 @@ return (
   }
 
 export default WeeklyGoals;
+
