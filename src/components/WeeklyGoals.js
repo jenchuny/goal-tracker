@@ -4,6 +4,7 @@ import { goalsCollection, userCollection } from '../firebaseUtils';
 import { useAuth } from './AuthContext';
 import { startOfWeek, endOfWeek } from 'date-fns';
 import { TodoCard } from './Card';
+import Points from './Points';
 
 function WeeklyGoals() {
   const [weekGoals, setWeekGoals] = useState([]);
@@ -13,7 +14,6 @@ function WeeklyGoals() {
   const [selectedPoints, setSelectedPoints] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [refreshGoals, setRefreshGoals] = useState(true);
-
 
   useEffect(() => {
     if (authUser && refreshGoals) {
@@ -170,6 +170,7 @@ function WeeklyGoals() {
 
 return (
   <div class ="w-full pt-10 px-4 sm:px-6 md:px-10 lg:pl-72 pb-10">
+  <Points userId={authUser.uid} />
   <div className="flex justify-between items-center w-full mx-auto">
     <h1 className="text-3xl font-semibold">Goals</h1>
     <button

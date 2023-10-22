@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
 import { getDocs, query, where } from 'firebase/firestore';
 import { goalsCollection, rewardsCollection } from '../firebaseUtils';
 
-function Points() {
-  const { authUser } = useAuth(); 
+function Points({ userId }) {
   const [points, setPoints] = useState(0);
   const [usedPoints, setUsedPoints] = useState(0);
 
   useEffect(() => {
-    if (authUser) {
-      fetchPoints(authUser.uid);
-      fetchUsedPoints(authUser.uid);
+    if (userId) {
+      fetchPoints(userId);
+      fetchUsedPoints(userId);
     }
-  }, [authUser]);
+  }, [userId]);
 
   const fetchPoints = async (userId) => {
     try {
-      if (!authUser) return; // Return early if no user is not logged in
+      if (!userId) return; // Return early if no user is not logged in
   
       const q = query(goalsCollection, where("userId", "==", userId), where("status", "==", "complete"));
       const querySnapshot = await getDocs(q);
@@ -35,7 +33,7 @@ function Points() {
 
   const fetchUsedPoints = async (userId) => {
     try {
-      if (!authUser) return; // Return early if no user is not logged in
+      if (!userId) return; // Return early if no user is not logged in
   
       const q = query(rewardsCollection, where("userId", "==", userId), where("redeemed", "==", true));
       const querySnapshot = await getDocs(q);
@@ -54,12 +52,50 @@ function Points() {
   const pointsLeft = points - usedPoints;
 
   return (
-    <div className="w-full pt-10 px-4 sm:px-6 md:px-8 lg:pl-72">
-      <h3>Your Points</h3>
-      <p>Total Points Earned: {points}</p>
-      <p>Points Used: {usedPoints}</p>
-      <p>Points Left: {pointsLeft}</p>
-    </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
+          <div class="p-4 md:p-5">
+            <div class="flex items-center gap-x-2">
+              <p class="text-xs uppercase tracking-wide text-gray-500">
+                Total Points Earned
+              </p>
+            </div>
+            <div class="mt-1 flex items-center">
+              <h3 class="text-xl sm:text-2xl font-medium text-orange-500 dark:text-gray-200">
+                {points}
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
+          <div class="p-4 md:p-5">
+            <div class="flex items-center gap-x-2">
+              <p class="text-xs uppercase tracking-wide text-gray-500">
+                Points Used
+              </p>
+            </div>
+            <div class="mt-1 flex items-center">
+              <h3 class="text-xl sm:text-2xl font-medium text-orange-500 dark:text-gray-200">
+                {usedPoints}
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-slate-900 dark:border-gray-800">
+          <div class="p-4 md:p-5">
+            <div class="flex items-center gap-x-2">
+              <p class="text-xs uppercase tracking-wide text-gray-500">
+                Points Left
+              </p>
+            </div>
+            <div class="mt-1 flex items-center">
+              <h3 class="text-xl sm:text-2xl font-medium text-orange-500 dark:text-gray-200">
+                {pointsLeft}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
   );
 }
 
