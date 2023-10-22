@@ -12,25 +12,21 @@ function WeeklyGoals() {
   const [userPoints, setUserPoints] = useState(0);
   const [selectedPoints, setSelectedPoints] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [refreshGoals, setRefreshGoals] = useState(true);
+
 
   useEffect(() => {
-    if (authUser) {
+    if (authUser && refreshGoals) {
       fetchThisWeeksGoals(authUser.uid)
         .then((userWeekGoals) => {
           setWeekGoals(userWeekGoals);
+          setRefreshGoals(false); // Reset the refresh flag after fetching
         })
         .catch((error) => {
           console.error('Error fetching this week\'s goals:', error);
         });
-      fetchUserPoints(authUser.uid)
-        .then((points) => {
-          setUserPoints(points);
-        })
-        .catch((error) => {
-          console.error('Error fetching user points:', error);
-        });
     }
-  }, [authUser]);
+  }, [authUser, refreshGoals]); // Add refreshGoals as a dependency
 
   const fetchThisWeeksGoals = async (userId) => {
     try {
@@ -90,7 +86,7 @@ function WeeklyGoals() {
       await addDoc(goalsCollection, goalData);
       setNewGoals(['']); // Clear input field
       setShowModal(false); // Close the modal
-      fetchThisWeeksGoals(authUser.uid); // Fetch the updated goals
+      setRefreshGoals(true);
     }
   };
 
@@ -118,7 +114,7 @@ function WeeklyGoals() {
   
       // Calculate the points change based on the status
       let pointsChange = 0;
-
+  
       if (currentStatus === 'incomplete' && newStatus === 'complete') {
         // Goal changed from incomplete to complete, add points to pointsChange
         pointsChange = assignedPoints;
@@ -127,8 +123,11 @@ function WeeklyGoals() {
         pointsChange = -assignedPoints;
       }
   
-      // Update the status to the newStatus
+      // Update the status to the newStatus in both firebase and local state
       await updateDoc(goalRef, { status: newStatus });
+      const updatedGoalDoc = await getDoc(goalRef);
+      console.log('Updated goal document:', updatedGoalDoc.data());
+      setRefreshGoals(true);
   
       // Update the local state to reflect the change and toggle the text
       setWeekGoals((prevGoals) =>
@@ -140,6 +139,8 @@ function WeeklyGoals() {
       // Update the pointsEarned in the user's document based on the status change
       if (authUser) {
         setUserPoints(userPoints + pointsChange);
+        const userRef = doc(userCollection, authUser.uid);
+        await updateDoc(userRef, { pointsEarned: userPoints + pointsChange });
       }
     } catch (error) {
       console.error('Error toggling goal status:', error);
@@ -151,9 +152,16 @@ function WeeklyGoals() {
       <div className="w-full py-4">
         <div className="w-full inline-block align-middle">
           <div className="rounded-lg overflow-hidden space-y-4">
-            {weekGoals.map((goal) => (
-              <TodoCard key={goal.id} title={goal.text} handleChangeGoalStatus={handleChangeGoalStatus} points={goal.assignedPoints}/>
-            ))}
+          {weekGoals.map((goal) => (
+    <TodoCard 
+        key={goal.id} 
+        title={goal.text} 
+        handleChangeGoalStatus={() => handleChangeGoalStatus(goal.id, goal.status)} 
+        points={goal.assignedPoints} 
+        goalId={goal.id} 
+        status={goal.status}
+    />
+))}
           </div>
         </div>
       </div>
