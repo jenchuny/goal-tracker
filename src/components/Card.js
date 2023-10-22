@@ -9,7 +9,7 @@ export const TodoCard = ({ title, status, points, goalId, handleChangeGoalStatus
   }, [status]);
   
   const unselectedStyle = "bg-white rounded-xl p-4";
-  const selectedStyle = "bg-orange-600 rounded-xl p-4 text-white";
+  const selectedStyle = "bg-orange-500 rounded-xl p-4 text-white";
 
   const handleStatusChange = () => {
     const newStatus = check ? 'incomplete' : 'complete';
@@ -24,7 +24,7 @@ export const TodoCard = ({ title, status, points, goalId, handleChangeGoalStatus
           <input type="checkbox" checked={check} onChange={handleStatusChange} />
           <h3 className={`text-lg font-bold ${clsx(check ? "text-white line-through" : "text-gray-800 dark:text-white")}`}>{title}</h3>
         </div>
-        <p className={`mt-2 ${clsx(check ? "text-white" : "text-gray-800 dark:text-gray-400")}`}><b>{points} points</b></p>
+        <p className={`mt-2 ${clsx(check ? "text-white" : "text-orange-500 dark:text-gray-400")}`}><b>{points} points</b></p>
       </div>
     </div>
   );
