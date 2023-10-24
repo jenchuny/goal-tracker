@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getDocs, query, where } from 'firebase/firestore';
+import { onSnapshot, query, where } from 'firebase/firestore';
 import { goalsCollection, rewardsCollection } from '../firebaseUtils';
 
 function Points({ userId }) {
@@ -8,47 +8,33 @@ function Points({ userId }) {
 
   useEffect(() => {
     if (userId) {
-      fetchPoints(userId);
-      fetchUsedPoints(userId);
+      const pointsQuery = query(goalsCollection, where("userId", "==", userId), where("status", "==", "complete"));
+      const usedPointsQuery = query(rewardsCollection, where("userId", "==", userId), where("redeemed", "==", true));
+  
+      const pointsUnsubscribe = onSnapshot(pointsQuery, (querySnapshot) => {
+        let totalPoints = 0;
+        querySnapshot.forEach((doc) => {
+          totalPoints += Number(doc.data().assignedPoints);
+        });
+        setPoints(totalPoints);
+      });
+  
+      const usedPointsUnsubscribe = onSnapshot(usedPointsQuery, (querySnapshot) => {
+        let totalUsedPoints = 0;
+        querySnapshot.forEach((doc) => {
+          totalUsedPoints += Number(doc.data().assignedPoints);
+        });
+        setUsedPoints(totalUsedPoints);
+      });
+  
+      // Clean up the listeners when the component unmounts
+      return () => {
+        pointsUnsubscribe();
+        usedPointsUnsubscribe();
+      };
     }
   }, [userId]);
 
-  const fetchPoints = async (userId) => {
-    try {
-      if (!userId) return; // Return early if no user is not logged in
-  
-      const q = query(goalsCollection, where("userId", "==", userId), where("status", "==", "complete"));
-      const querySnapshot = await getDocs(q);
-  
-      let totalPoints = 0;
-      querySnapshot.forEach((doc) => {
-        totalPoints += Number(doc.data().assignedPoints);
-      });
-  
-      setPoints(totalPoints);
-    } catch (error) {
-      console.error('Error fetching points: ', error);
-    }
-  };
-
-  const fetchUsedPoints = async (userId) => {
-    try {
-      if (!userId) return; // Return early if no user is not logged in
-  
-      const q = query(rewardsCollection, where("userId", "==", userId), where("redeemed", "==", true));
-      const querySnapshot = await getDocs(q);
-  
-      let totalUsedPoints = 0;
-      querySnapshot.forEach((doc) => {
-        totalUsedPoints += Number(doc.data().assignedPoints);
-      });
-  
-      setUsedPoints(totalUsedPoints);
-    } catch (error) {
-      console.error('Error fetching used points: ', error);
-    }
-  };
-    
   const pointsLeft = points - usedPoints;
 
   return (
