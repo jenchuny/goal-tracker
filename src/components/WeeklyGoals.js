@@ -10,7 +10,6 @@ function WeeklyGoals() {
   const [weekGoals, setWeekGoals] = useState([]);
   const { authUser } = useAuth();
   const [newGoals, setNewGoals] = useState(['']);
-  const [userPoints, setUserPoints] = useState(0);
   const [selectedPoints, setSelectedPoints] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [refreshGoals, setRefreshGoals] = useState(true);
@@ -56,22 +55,6 @@ function WeeklyGoals() {
     }
   };
 
-  const fetchUserPoints = async (userId) => {
-    try {
-      const userRef = doc(userCollection, userId);
-  
-      // Fetch the user document
-      const userDoc = await getDoc(userRef);
-  
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        return userData.pointsEarned;
-      }
-    } catch (error) {
-      console.error('Error fetching user points:', error);
-    }
-  };
-
   const handleAddGoal = async () => {
     const goalText = newGoals[0].trim();
 
@@ -97,54 +80,21 @@ function WeeklyGoals() {
   };
 
   const handleChangeGoalStatus = async (goalId, currentStatus) => {
-    try {
-      const goalRef = doc(goalsCollection, goalId);
-      const newStatus = currentStatus === 'complete' ? 'incomplete' : 'complete';
+    const goalRef = doc(goalsCollection, goalId);
+    const newStatus = currentStatus === 'complete' ? 'incomplete' : 'complete';
   
-      // Fetch the goal document to get assigned points
-      const goalDoc = await getDoc(goalRef);
+    // Update the status to the newStatus in both firebase and local state
+    await updateDoc(goalRef, { status: newStatus });
+    const updatedGoalDoc = await getDoc(goalRef);
+    console.log('Updated goal document:', updatedGoalDoc.data());
+    setRefreshGoals(true);
   
-      if (!goalDoc.exists()) {
-        console.error('Goal document does not exist.');
-        return;
-      }
-  
-      const goalData = goalDoc.data();
-      const assignedPoints = Number(goalData.assignedPoints); // Convert to a number   
-  
-      // Calculate the points change based on the status
-      let pointsChange = 0;
-  
-      if (currentStatus === 'incomplete' && newStatus === 'complete') {
-        // Goal changed from incomplete to complete, add points to pointsChange
-        pointsChange = assignedPoints;
-      } else if (currentStatus === 'complete' && newStatus === 'incomplete') {
-        // Goal changed from complete to incomplete, subtract points from pointsChange
-        pointsChange = -assignedPoints;
-      }
-  
-      // Update the status to the newStatus in both firebase and local state
-      await updateDoc(goalRef, { status: newStatus });
-      const updatedGoalDoc = await getDoc(goalRef);
-      console.log('Updated goal document:', updatedGoalDoc.data());
-      setRefreshGoals(true);
-  
-      // Update the local state to reflect the change and toggle the text
-      setWeekGoals((prevGoals) =>
-        prevGoals.map((goal) =>
-          goal.id === goalId ? { ...goal, status: newStatus } : goal
-        )
-      );
-  
-      // Update the pointsEarned in the user's document based on the status change
-      if (authUser) {
-        setUserPoints(userPoints + pointsChange);
-        const userRef = doc(userCollection, authUser.uid);
-        await updateDoc(userRef, { pointsEarned: userPoints + pointsChange });
-      }
-    } catch (error) {
-      console.error('Error toggling goal status:', error);
-    }
+    // Update the local state to reflect the change and toggle the text
+    setWeekGoals((prevGoals) =>
+      prevGoals.map((goal) =>
+        goal.id === goalId ? { ...goal, status: newStatus } : goal
+      )
+    );
   };
   
   const WeeklyGoalsTable = ({ goals }) => {
@@ -170,7 +120,7 @@ function WeeklyGoals() {
 
 return (
   <div class ="w-full pt-10 px-4 sm:px-6 md:px-10 lg:pl-72 pb-10">
-  <Points userId={authUser.uid} />
+  {authUser && <Points userId={authUser.uid} />}
   <div className="flex justify-between items-center w-full mx-auto">
     <h1 className="text-3xl font-semibold">Goals</h1>
     <button
