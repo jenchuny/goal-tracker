@@ -7,7 +7,7 @@ function Rewards() {
   const [rewards, setRewards] = useState([]);
   const [redeemedRewards, setRedeemedRewards] = useState([]);
   const [unredeemedRewards, setUnredeemedRewards] = useState([]);
-  const [activeTab, setActiveTab] = useState('redeemed');
+  const [activeTab, setActiveTab] = useState('unredeemed');
   const { authUser } = useAuth();
   const [newReward, setNewReward] = useState('');
   const [selectedPoints, setSelectedPoints] = useState(1);
@@ -79,7 +79,10 @@ function Rewards() {
     try {
       const rewardRef = doc(rewardsCollection, rewardId);
       await updateDoc(rewardRef, { redeemed: true });
-      setRewards(oldRewards => oldRewards.map(reward => reward.id === rewardId ? { ...reward, redeemed: true } : reward));
+      const updatedRewards = rewards.map(reward => reward.id === rewardId ? { ...reward, redeemed: true } : reward);
+      setRewards(updatedRewards);
+      setRedeemedRewards(updatedRewards.filter(reward => reward.redeemed));
+      setUnredeemedRewards(updatedRewards.filter(reward => !reward.redeemed));
     } catch (error) {
       console.error('Error marking reward as redeemed: ', error);
     }
