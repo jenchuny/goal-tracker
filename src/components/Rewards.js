@@ -134,7 +134,7 @@ function Rewards() {
         <nav class="flex space-x-2" aria-label="Tabs" role="tablist">
         <button
   type="button"
-  className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'unredeemed' ? 'font-semibold border-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
+  className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'unredeemed' ? 'font-semibold border-b-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
   onClick={() => setActiveTab('unredeemed')}
 >
             Unredeemed Rewards{' '}
@@ -142,11 +142,11 @@ function Rewards() {
               {unredeemedRewards.length}
             </span>
           </button>
-<button
-  type="button"
-  className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'redeemed' ? 'font-semibold border-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
-  onClick={() => setActiveTab('redeemed')}
->
+          <button
+            type="button"
+            className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'redeemed' ? 'font-semibold border-b-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
+            onClick={() => setActiveTab('redeemed')}
+          >
             Redeemed Rewards{' '}
             <span className="hs-tab-active:bg-orange-100 hs-tab-active:text-orange-600 dark:hs-tab-active:bg-orange-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
               {redeemedRewards.length}
