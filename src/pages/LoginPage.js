@@ -25,7 +25,7 @@ function LoginPage() {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
-        navigate('/goals');
+        navigate('/this-week');
       })
       .catch((error) => {
         showError('Sorry, we could not log you in. Please try again.');
