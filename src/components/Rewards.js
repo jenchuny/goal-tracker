@@ -134,21 +134,21 @@ function Rewards() {
         <nav class="flex space-x-2" aria-label="Tabs" role="tablist">
         <button
   type="button"
-  className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'unredeemed' ? 'font-semibold border-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
+  className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'unredeemed' ? 'font-semibold border-b-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
   onClick={() => setActiveTab('unredeemed')}
 >
             Unredeemed Rewards{' '}
-            <span className="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+            <span className="hs-tab-active:bg-orange-100 hs-tab-active:text-orange-600 dark:hs-tab-active:bg-orange-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
               {unredeemedRewards.length}
             </span>
           </button>
-<button
-  type="button"
-  className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'redeemed' ? 'font-semibold border-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
-  onClick={() => setActiveTab('redeemed')}
->
+          <button
+            type="button"
+            className={`py-4 px-1 inline-flex items-center gap-2 border-b-[3px] border-transparent text-sm whitespace-nowrap ${activeTab === 'redeemed' ? 'font-semibold border-b-orange-500 text-slate-900' : 'text-slate-500 hover:text-orange-500'}`}
+            onClick={() => setActiveTab('redeemed')}
+          >
             Redeemed Rewards{' '}
-            <span className="hs-tab-active:bg-blue-100 hs-tab-active:text-blue-600 dark:hs-tab-active:bg-blue-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+            <span className="hs-tab-active:bg-orange-100 hs-tab-active:text-orange-600 dark:hs-tab-active:bg-orange-800 dark:hs-tab-active:text-white ml-1 py-0.5 px-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
               {redeemedRewards.length}
             </span>
           </button>
@@ -173,7 +173,7 @@ function Rewards() {
                         type="text"
                         id="reward-input"
                         name="reward-input"
-                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 mb-5"
+                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-orange-500 focus:ring-orange-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 mb-5"
                         value={newReward}
                         onChange={(e) => setNewReward(e.target.value)}
                         placeholder="Enter your reward"
@@ -183,7 +183,7 @@ function Rewards() {
                       <select
                         id="points-select"
                         name="points-select"
-                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                        className="py-3 px-4 block w-full border-gray-200 rounded-md text-sm focus:border-orange-500 focus:ring-orange-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
                         value={selectedPoints}
                         onChange={(e) => setSelectedPoints(parseInt(e.target.value))}
                         style={{paddingLeft: '1rem', paddingRight: '1rem'}}
