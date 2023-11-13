@@ -8,11 +8,13 @@ import Points from './Points';
 
 function WeeklyGoals() {
   const [weekGoals, setWeekGoals] = useState([]);
+  const [allGoals, setAllGoals] = useState([]);
   const { authUser } = useAuth();
   const [newGoals, setNewGoals] = useState(['']);
   const [selectedPoints, setSelectedPoints] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [refreshGoals, setRefreshGoals] = useState(true);
+  const [activeTab, setActiveTab] = useState('thisWeek');
 
   useEffect(() => {
     if (authUser && refreshGoals) {
@@ -23,6 +25,19 @@ function WeeklyGoals() {
         })
         .catch((error) => {
           console.error('Error fetching this week\'s goals:', error);
+        });
+    }
+  }, [authUser, refreshGoals]); // Add refreshGoals as a dependency
+
+  useEffect(() => {
+    if (authUser && refreshGoals) {
+      fetchAllGoals(authUser.uid)
+        .then((userAllGoals) => {
+          setAllGoals(userAllGoals);
+          setRefreshGoals(false); // Reset the refresh flag after fetching
+        })
+        .catch((error) => {
+          console.error('Error fetching all goals:', error);
         });
     }
   }, [authUser, refreshGoals]); // Add refreshGoals as a dependency
@@ -51,6 +66,29 @@ function WeeklyGoals() {
       return weekGoalsData;
     } catch (error) {
       console.error('Error fetching this week\'s goals: ', error);
+      return [];
+    }
+  };
+
+  const fetchAllGoals = async (userId) => {
+    try {
+      if (!userId) return [];
+
+      const q = query(
+        goalsCollection,
+        where('userId', '==', userId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const allGoalsData = [];
+
+      querySnapshot.forEach((doc) => {
+        allGoalsData.push({ id: doc.id, ...doc.data() });
+      });
+
+      return allGoalsData;
+    } catch (error) {
+      console.error('Error fetching all goals: ', error);
       return [];
     }
   };
@@ -97,12 +135,12 @@ function WeeklyGoals() {
     );
   };
   
-  const WeeklyGoalsTable = ({ goals }) => {
+  const GoalsTable = ({ goals }) => {
     return (
       <div className="w-full py-4">
         <div className="w-full inline-block align-middle">
           <div className="rounded-lg overflow-hidden space-y-4">
-          {weekGoals.map((goal) => (
+          {goals.map((goal) => (
     <TodoCard 
         key={goal.id} 
         title={goal.text} 
@@ -202,12 +240,38 @@ return (
         </div>
       ) : null}
   
-    {weekGoals && weekGoals.length > 0 ? (
-      <WeeklyGoalsTable goals={weekGoals} />
-        ) : (
-          <p>No goals available.</p>
+  <div class="mt-3">
+    <div className="flex justify-between items-center w-full mx-auto">
+      <button
+        type="button"
+        className={activeTab === 'thisWeek' ? "py-2 px-4 inline-flex flex-shrink-0 justify-end items-center gap-2 rounded-md border border-black font-semibold bg-transparent text-black hover:bg-gray-200 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all text-lg" : "py-2 px-4 inline-flex flex-shrink-0 justify-end items-center gap-2 rounded-md border border-black font-semibold bg-transparent text-gray-500 hover:bg-gray-200 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all text-lg"}
+        onClick={() => setActiveTab('thisWeek')}
+      >
+        This Week
+      </button>
+      <button
+        type="button"
+        className={activeTab === 'all' ? "py-2 px-4 inline-flex flex-shrink-0 justify-end items-center gap-2 rounded-md border border-black font-semibold bg-transparent text-black hover:bg-gray-200 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all text-lg" : "py-2 px-4 inline-flex flex-shrink-0 justify-end items-center gap-2 rounded-md border border-black font-semibold bg-transparent text-gray-500 hover:bg-gray-200 focus:z-10 focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all text-lg"}
+        onClick={() => setActiveTab('all')}
+      >
+        All
+      </button>
+    </div>
+    <div id="this-week-goals" class={activeTab === 'thisWeek' ? '' : 'hidden'} role="tabpanel" aria-labelledby="this-week-goals-tab">
+      {weekGoals && weekGoals.length > 0 ? (
+        <GoalsTable goals={weekGoals} />
+      ) : (
+        <p>No goals available for this week.</p>
       )}
-  
+    </div>
+    <div id="all-goals" class={activeTab === 'all' ? '' : 'hidden'} role="tabpanel" aria-labelledby="all-goals-tab">
+      {allGoals && allGoals.length > 0 ? (
+        <GoalsTable goals={allGoals} />
+      ) : (
+        <p>No goals available.</p>
+      )}
+    </div>
+  </div>
       
       
 
